@@ -14,13 +14,15 @@ const CustomCursor = () => {
     const handleMouseUp = () => setIsClicking(false);
 
     const handleMouseEnter = (e) => {
-      if (e.target.matches('button, a, .cursor-pointer, [role="button"]')) {
+      if (e.target && typeof e.target.matches === 'function' && 
+          e.target.matches('button, a, .cursor-pointer, [role="button"]')) {
         setIsHovering(true);
       }
     };
 
     const handleMouseLeave = (e) => {
-      if (e.target.matches('button, a, .cursor-pointer, [role="button"]')) {
+      if (e.target && typeof e.target.matches === 'function' && 
+          e.target.matches('button, a, .cursor-pointer, [role="button"]')) {
         setIsHovering(false);
       }
     };
