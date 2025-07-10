@@ -10,9 +10,8 @@ const Footer = () => {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
           {/* Brand */}
           <div className="space-y-4">
-            <h3 className="text-2xl font-bold text-white">
-              Pankaj <span className="text-orange-500">Kshetri</span>
-            </h3>
+            {/* Replace with your logo image or SVG below */}
+            <img src={require('../../assets/logo.png')} alt="Logo" className="h-10 w-auto" />
             <p className="text-gray-400 leading-relaxed">
               Software Developer passionate about creating efficient, scalable solutions 
               using Java, Spring Boot, and modern web technologies.

@@ -38,7 +38,7 @@ const Navigation = () => {
       setTimeout(() => {
         const element = document.getElementById(sectionId);
         if (element) {
-          element.scrollIntoView({ behavior: 'smooth' });
+          element.scrollIntoView({ behavior: 'auto' }); // instant scroll
         }
         mainContent.classList.remove('fade-out-section');
         mainContent.classList.add('fade-in-section');
@@ -46,11 +46,6 @@ const Navigation = () => {
           mainContent.classList.remove('fade-in-section');
         }, 700);
       }, 300);
-    } else {
-      const element = document.getElementById(sectionId);
-      if (element) {
-        element.scrollIntoView({ behavior: 'smooth' });
-      }
     }
     setIsMobileMenuOpen(false);
   };
@@ -67,9 +62,8 @@ const Navigation = () => {
         <div className="flex items-center justify-between h-16">
           {/* Logo */}
           <div className="flex-shrink-0">
-            <h1 className="text-2xl font-bold text-white">
-              Pankaj <span className="text-orange-500">Kshetri</span>
-            </h1>
+            {/* Replace with your logo image or SVG below */}
+            <img src={require('../../assets/logo.png')} alt="Logo" className="h-10 w-auto" />
           </div>
 
           {/* Desktop Navigation */}
