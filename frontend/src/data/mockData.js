@@ -5,7 +5,7 @@ export const personalInfo = {
   title: "Software Developer",
   tagline: "I'm Pankaj",
   description: "I'm Pankaj Kshetri, a passionate software developer who enjoys turning ideas into efficient code. My core strength lies in Java and Spring Boot for backend development, with solid frontend fundamentals using HTML, CSS, and vanilla JavaScript. I'm also familiar with working on Git-based version control systems and love building responsive, user-friendly web experiences.",
-  profileImage: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&h=400&fit=crop&crop=face&auto=format&q=80",
+  profileImage: require("../assets/WhatsApp Image 2025-07-10 at 12.45.50 PM.jpeg"),
   resume: "/resume.pdf"
 };
 
