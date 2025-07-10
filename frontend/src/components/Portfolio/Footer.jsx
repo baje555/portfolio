@@ -27,9 +27,25 @@ const Footer = () => {
                 <li key={link}>
                   <button 
                     onClick={() => {
-                      const element = document.getElementById(link.toLowerCase());
-                      if (element) {
-                        element.scrollIntoView({ behavior: 'smooth' });
+                      const mainContent = document.querySelector('main');
+                      if (mainContent) {
+                        mainContent.classList.add('fade-out-section');
+                        setTimeout(() => {
+                          const element = document.getElementById(link.toLowerCase());
+                          if (element) {
+                            element.scrollIntoView({ behavior: 'smooth' });
+                          }
+                          mainContent.classList.remove('fade-out-section');
+                          mainContent.classList.add('fade-in-section');
+                          setTimeout(() => {
+                            mainContent.classList.remove('fade-in-section');
+                          }, 700);
+                        }, 300);
+                      } else {
+                        const element = document.getElementById(link.toLowerCase());
+                        if (element) {
+                          element.scrollIntoView({ behavior: 'smooth' });
+                        }
                       }
                     }}
                     className="text-gray-400 hover:text-orange-500 transition-colors duration-300"
