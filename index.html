@@ -158,7 +158,44 @@
       color: #ddeef2;
       line-height: 1.0;
       letter-spacing: -0.025em;
-      text-shadow: 0 0 60px rgba(0,245,212,0.12);
+      position: relative;
+      display: inline-block;
+    }
+
+    /* glitch layers */
+    .h-name::before,
+    .h-name::after {
+      content: attr(data-text);
+      position: absolute;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      font: inherit;
+      color: #ddeef2;
+      pointer-events: none;
+    }
+    .h-name::before {
+      color: var(--cyan);
+      animation: glitch-a 4s infinite steps(1);
+    }
+    .h-name::after {
+      color: #ff2d6b;
+      animation: glitch-b 4s infinite steps(1);
+    }
+
+    @keyframes glitch-a {
+      0%,90%,100%  { clip-path: none; transform: none; opacity: 0; }
+      91%  { clip-path: inset(12% 0 72% 0); transform: translate(-3px, 0); opacity: 1; }
+      93%  { clip-path: inset(55% 0 20% 0); transform: translate(3px, 0);  opacity: 1; }
+      95%  { clip-path: inset(80% 0 5%  0); transform: translate(-2px,0);  opacity: 1; }
+      97%  { clip-path: inset(30% 0 50% 0); transform: translate(2px, 0);  opacity: 1; }
+      99%  { clip-path: none; transform: none; opacity: 0; }
+    }
+    @keyframes glitch-b {
+      0%,92%,100%  { clip-path: none; transform: none; opacity: 0; }
+      93%  { clip-path: inset(60% 0 15% 0); transform: translate(4px, 0);  opacity: 1; }
+      95%  { clip-path: inset(20% 0 65% 0); transform: translate(-4px,0);  opacity: 1; }
+      97%  { clip-path: inset(45% 0 35% 0); transform: translate(2px, 0);  opacity: 1; }
+      99%  { clip-path: none; transform: none; opacity: 0; }
     }
 
     .h-alias {
@@ -199,15 +236,6 @@
       margin-top: 0.9rem;
       font-weight: 300;
       letter-spacing: 0.01em;
-    }
-
-    /* hero social links */
-    .h-socials {
-      display: flex;
-      gap: 1.75rem;
-      flex-wrap: wrap;
-      align-items: center;
-      margin-top: 2.2rem;
     }
 
     @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0} }
@@ -459,33 +487,12 @@
   <!-- HERO -->
   <section id="hero">
     <div class="wrap hero-inner">
-      <h1 class="h-name fi">Pankaj<br>Kshetri</h1>
+      <h1 class="h-name fi" data-text="Pankaj&#10;Kshetri">Pankaj<br>Kshetri</h1>
       <p class="h-alias fi" style="transition-delay:.12s">@baje</p>
       <p class="h-role fi" style="transition-delay:.22s">
         <span class="h-role-text" id="role-text"></span><span class="h-cursor"></span>
       </p>
       <p class="h-tagline fi" style="transition-delay:.32s">Curious by default. Security-minded by choice.</p>
-      <div class="h-socials fi" style="transition-delay:.42s">
-        <a class="cl" href="https://github.com/baje555" target="_blank" rel="noopener">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" width="17" height="17">
-            <path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"/>
-          </svg>
-          github
-        </a>
-        <a class="cl" href="https://ctftime.org/user/placeholder" target="_blank" rel="noopener">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" width="17" height="17">
-            <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
-          </svg>
-          ctftime
-        </a>
-        <a class="cl" href="mailto:kshetripankaj73@gmail.com">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" width="17" height="17">
-            <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/>
-            <polyline points="22,6 12,13 2,6"/>
-          </svg>
-          email
-        </a>
-      </div>
     </div>
   </section>
 
