@@ -1,108 +1,23 @@
 import React from 'react';
-import { personalInfo, contactInfo } from '../../data/mockData';
 
-const Footer = () => {
-  const currentYear = new Date().getFullYear();
-
-  return (
-    <footer className="bg-slate-950 border-t border-slate-800 py-12">
-      <div className="container mx-auto px-4">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-          {/* Brand */}
-          <div className="space-y-4">
-            {/* Replace with your logo image or SVG below */}
-            <img src={require('../../assets/logo.png')} alt="Logo" className="h-10 w-auto" />
-            <p className="text-gray-400 leading-relaxed">
-              Software Developer passionate about creating efficient, scalable solutions 
-              using Java, Spring Boot, and modern web technologies.
-            </p>
-          </div>
-
-          {/* Quick Links */}
-          <div className="space-y-4">
-            <h4 className="text-lg font-semibold text-white">Quick Links</h4>
-            <ul className="space-y-2">
-              {['Home', 'About', 'Services', 'Projects', 'Contact'].map((link) => (
-                <li key={link}>
-                  <button 
-                    onClick={() => {
-                      const mainContent = document.querySelector('main');
-                      if (mainContent) {
-                        mainContent.classList.add('fade-out-section');
-                        setTimeout(() => {
-                          const element = document.getElementById(link.toLowerCase());
-                          if (element) {
-                            element.scrollIntoView({ behavior: 'smooth' });
-                          }
-                          mainContent.classList.remove('fade-out-section');
-                          mainContent.classList.add('fade-in-section');
-                          setTimeout(() => {
-                            mainContent.classList.remove('fade-in-section');
-                          }, 700);
-                        }, 300);
-                      } else {
-                        const element = document.getElementById(link.toLowerCase());
-                        if (element) {
-                          element.scrollIntoView({ behavior: 'smooth' });
-                        }
-                      }
-                    }}
-                    className="text-gray-400 hover:text-orange-500 transition-colors duration-300"
-                  >
-                    {link}
-                  </button>
-                </li>
-              ))}
-            </ul>
-          </div>
-
-          {/* Contact Info */}
-          <div className="space-y-4">
-            <h4 className="text-lg font-semibold text-white">Get In Touch</h4>
-            <div className="space-y-2">
-              <p className="text-gray-400">
-                <span className="text-orange-500">📧</span> {contactInfo.email}
-              </p>
-              <p className="text-gray-400">
-                <span className="text-orange-500">🌍</span> {contactInfo.location}
-              </p>
-            </div>
-            <div className="flex space-x-4">
-              <a 
-                href={contactInfo.github}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-gray-400 hover:text-orange-500 transition-colors duration-300 text-xl"
-              >
-                🐙
-              </a>
-              <a 
-                href={contactInfo.linkedin}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-gray-400 hover:text-orange-500 transition-colors duration-300 text-xl"
-              >
-                💼
-              </a>
-              <a 
-                href={`mailto:${contactInfo.email}`}
-                className="text-gray-400 hover:text-orange-500 transition-colors duration-300 text-xl"
-              >
-                📧
-              </a>
-            </div>
-          </div>
-        </div>
-
-        {/* Bottom Section */}
-        <div className="border-t border-slate-800 mt-8 pt-8 text-center">
-          <p className="text-gray-400">
-            © {currentYear} Pankaj Kshetri. All rights reserved. Built with React and passion for coding.
-          </p>
-        </div>
-      </div>
-    </footer>
-  );
-};
+const Footer = () => (
+  <footer style={{
+    position: 'relative', zIndex: 1,
+    borderTop: '1px solid var(--border)',
+    padding: '2rem 1.5rem',
+    display: 'flex',
+    flexWrap: 'wrap',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    gap: '1rem',
+  }}>
+    <span style={{ fontFamily: 'var(--mono)', fontSize: '0.7rem', color: 'var(--text-dim)' }}>
+      © {new Date().getFullYear()} Pankaj Kshetri · <span style={{ color: 'var(--cyan)' }}>baje</span>
+    </span>
+    <span style={{ fontFamily: 'var(--mono)', fontSize: '0.65rem', color: 'var(--text-dim)' }}>
+      built with intent, not templates
+    </span>
+  </footer>
+);
 
 export default Footer;

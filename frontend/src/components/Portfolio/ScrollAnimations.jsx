@@ -1,57 +1,30 @@
 import React, { useEffect, useRef } from 'react';
 
-const ScrollAnimations = ({ children, animation = 'fadeInUp', delay = 0, threshold = 0.1 }) => {
-  const elementRef = useRef(null);
+// Wraps children in a reveal container; adds .visible when scrolled into view
+const ScrollAnimations = ({ children, direction = 'up', delay = 0, className = '' }) => {
+  const ref = useRef(null);
+
+  const cls = direction === 'left'  ? 'reveal-left'
+            : direction === 'right' ? 'reveal-right'
+            : 'reveal';
 
   useEffect(() => {
-    const element = elementRef.current;
-    if (!element) return;
+    const el = ref.current;
+    if (!el) return;
+
+    el.style.transitionDelay = `${delay}ms`;
 
     const observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting) {
-            setTimeout(() => {
-              entry.target.classList.add('animate-in');
-            }, delay);
-          }
-        });
-      },
-      { threshold }
+      ([entry]) => { if (entry.isIntersecting) { el.classList.add('visible'); observer.unobserve(el); } },
+      { threshold: 0.12 }
     );
 
-    observer.observe(element);
-
+    observer.observe(el);
     return () => observer.disconnect();
-  }, [delay, threshold]);
-
-  const getAnimationClass = () => {
-    switch (animation) {
-      case 'fadeInUp':
-        return 'opacity-0 translate-y-8';
-      case 'fadeInLeft':
-        return 'opacity-0 -translate-x-8';
-      case 'fadeInRight':
-        return 'opacity-0 translate-x-8';
-      case 'fadeInDown':
-        return 'opacity-0 -translate-y-8';
-      case 'scaleIn':
-        return 'opacity-0 scale-95';
-      case 'rotateIn':
-        return 'opacity-0 rotate-6';
-      default:
-        return 'opacity-0 translate-y-8';
-    }
-  };
+  }, [delay]);
 
   return (
-    <div
-      ref={elementRef}
-      className={`${getAnimationClass()} transition-all duration-700 ease-out ${
-        animation === 'scaleIn' ? 'transform-gpu' : ''
-      }`}
-      style={{ transitionDelay: `${delay}ms` }}
-    >
+    <div ref={ref} className={`${cls} ${className}`}>
       {children}
     </div>
   );

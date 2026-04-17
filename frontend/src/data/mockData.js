@@ -1,107 +1,135 @@
-// Mock data for Pankaj Kshetri's Portfolio
+// Portfolio data for Pankaj Kshetri | baje
 
 export const personalInfo = {
   name: "Pankaj Kshetri",
-  title: "Software Developer",
-  tagline: "I'm Pankaj",
-  description: "I'm Pankaj Kshetri, a passionate software developer who enjoys turning ideas into efficient code. My core strength lies in Java and Spring Boot for backend development, with solid frontend fundamentals using HTML, CSS, and vanilla JavaScript. I'm also familiar with working on Git-based version control systems and love building responsive, user-friendly web experiences.",
-  profileImage: require("../assets/profile.jpeg"),
-  resume: "/resume.pdf"
+  handle: "baje",
+  tagline: "Breaking things to understand them.",
+  email: "kshetripankaj73@gmail.com",
+  github: "https://github.com/baje555",
+  ctftime: "https://ctftime.org/user/placeholder",
+  hackthebox: "https://app.hackthebox.com/profile/placeholder",
+  tryhackme: "https://tryhackme.com/p/placeholder",
+  linkedin: "https://linkedin.com/in/pankaj55",
 };
 
+export const roles = [
+  "CTF Player",
+  "Web Hacker",
+  "OSINT Analyst",
+  "Recon Specialist",
+  "Cybersecurity Student",
+];
+
 export const skills = [
-  { name: "HTML5", icon: "🌐", level: 90 },
-  { name: "CSS", icon: "🎨", level: 85 },
-  { name: "Java", icon: "☕", level: 95 },
-  { name: "Spring Boot", icon: "🍃", level: 90 },
-  { name: "MariaDB", icon: "🗄️", level: 80 },
-  { name: "Git", icon: "📦", level: 85 },
-  { name: "GitHub", icon: "🐙", level: 85 }
+  { name: "Web Exploitation", category: "offense" },
+  { name: "OSINT", category: "intel" },
+  { name: "Reconnaissance", category: "intel" },
+  { name: "Network Analysis", category: "defense" },
+  { name: "Linux", category: "core" },
+  { name: "Python", category: "core" },
+  { name: "Burp Suite", category: "tool" },
+  { name: "Nmap", category: "tool" },
+  { name: "Shodan", category: "tool" },
+  { name: "Google Dorking", category: "intel" },
+  { name: "SQL Injection", category: "offense" },
+  { name: "XSS", category: "offense" },
 ];
 
-export const statistics = [
-  { number: "10+", label: "Completed Projects", suffix: "+" },
-  { number: "5+", label: "Happy Clients", suffix: "+" },
-  { number: "1+", label: "Years of Experience", suffix: "+" }
-];
-
-export const services = [
+export const ctfEvents = [
   {
     id: 1,
-    icon: "🌐",
-    title: "Website Development",
-    description: "Creating responsive and modern websites using HTML, CSS, JavaScript and modern frameworks."
+    name: "PicoCTF 2024",
+    organizer: "Carnegie Mellon University",
+    date: "March 2024",
+    rank: "Top 15%",
+    points: 4200,
+    category: "General",
+    writeupUrl: "#",
+    tags: ["Web", "Forensics", "Crypto"],
   },
   {
     id: 2,
-    icon: "⚙️",
-    title: "Backend/API Development",
-    description: "Building robust backend services and RESTful APIs using Java and Spring Boot."
+    name: "HackTheBox CTF",
+    organizer: "HackTheBox",
+    date: "Jan 2024",
+    rank: "Top 20%",
+    points: 3100,
+    category: "Attack/Defense",
+    writeupUrl: "#",
+    tags: ["Web", "OSINT", "Pwn"],
   },
   {
     id: 3,
-    icon: "🏠",
-    title: "Website Hosting Setup",
-    description: "Setting up and configuring web hosting solutions for optimal performance."
+    name: "TryHackMe Advent of Cyber",
+    organizer: "TryHackMe",
+    date: "Dec 2023",
+    rank: "Completed",
+    points: 2400,
+    category: "Learning",
+    writeupUrl: "#",
+    tags: ["Web", "Network", "Linux"],
   },
   {
     id: 4,
-    icon: "🗄️",
-    title: "Database Design & Integration",
-    description: "Designing efficient database schemas and integrating with MariaDB and other databases."
-  }
+    name: "CTFlearn Open CTF",
+    organizer: "CTFlearn",
+    date: "Oct 2023",
+    rank: "Top 25%",
+    points: 1850,
+    category: "General",
+    writeupUrl: "#",
+    tags: ["Web", "OSINT", "Forensics"],
+  },
 ];
 
 export const projects = [
   {
     id: 1,
-    title: "To-Do App",
-    description: "A full-stack task management application built with Spring Boot backend and responsive HTML/CSS/JS frontend.",
-    technologies: ["Java", "Spring Boot", "HTML", "CSS", "JavaScript"],
-    image: "https://images.unsplash.com/photo-1611224923853-80b023f02d71?w=400&h=250&fit=crop&auto=format&q=80",
-    github: "https://github.com/baje555/todo-app",
-    live: "#"
+    title: "OSINT Recon Toolkit",
+    description:
+      "Automated Python tool for passive reconnaissance — aggregates data from Shodan, WHOIS, DNS records, and social media footprints into a structured report.",
+    category: "OSINT",
+    tags: ["Python", "Shodan API", "DNS", "WHOIS"],
+    github: "https://github.com/baje555",
+    status: "active",
   },
   {
     id: 2,
-    title: "Weather Web App",
-    description: "A weather application that fetches real-time weather data through API integration with clean UI design.",
-    technologies: ["Java", "Spring Boot", "API Integration", "HTML", "CSS"],
-    image: "https://images.unsplash.com/photo-1504608524841-42fe6f032b4b?w=400&h=250&fit=crop&auto=format&q=80",
-    github: "https://github.com/baje555/weather-app",
-    live: "#"
+    title: "Web Vuln Scanner",
+    description:
+      "Lightweight Python script that automates detection of common web vulnerabilities — SQLi, XSS, open redirects, and misconfigured headers.",
+    category: "Web",
+    tags: ["Python", "Requests", "BeautifulSoup", "Regex"],
+    github: "https://github.com/baje555",
+    status: "active",
   },
   {
     id: 3,
-    title: "eCommerce Backend",
-    description: "A robust backend system for eCommerce applications with payment integration and inventory management.",
-    technologies: ["Java", "Spring Boot", "MariaDB", "Payment API"],
-    image: "https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?w=400&h=250&fit=crop&auto=format&q=80",
-    github: "https://github.com/baje555/ecommerce-backend",
-    live: "#"
+    title: "CTF Writeup Repository",
+    description:
+      "Documented solutions and methodologies for CTF challenges across web exploitation, OSINT, and forensics categories.",
+    category: "Tool",
+    tags: ["Markdown", "Web", "OSINT", "Forensics"],
+    github: "https://github.com/baje555",
+    status: "ongoing",
   },
   {
     id: 4,
-    title: "Chatbot Web UI",
-    description: "An interactive chatbot interface with backend API integration for seamless user communication.",
-    technologies: ["HTML", "CSS", "JavaScript", "Spring Boot", "WebSocket"],
-    image: "https://images.unsplash.com/photo-1531746790731-6c087fecd65a?w=400&h=250&fit=crop&auto=format&q=80",
-    github: "https://github.com/baje555/chatbot-ui",
-    live: "#"
-  }
+    title: "Dorking Automation Script",
+    description:
+      "Python utility that generates and executes targeted Google dork queries for OSINT investigations, with result parsing and export.",
+    category: "OSINT",
+    tags: ["Python", "Google Dorking", "Automation"],
+    github: "https://github.com/baje555",
+    status: "active",
+  },
 ];
-
-export const contactInfo = {
-  email: "kshetripankaj73@gmail.com",
-  github: "https://github.com/baje555",
-  linkedin: "https://linkedin.com/in/pankaj55",
-  location: "Available for Remote Work"
-};
 
 export const navigation = [
   { name: "Home", href: "#home" },
   { name: "About", href: "#about" },
-  { name: "Services", href: "#services" },
+  { name: "Skills", href: "#skills" },
+  { name: "CTF", href: "#ctf" },
   { name: "Projects", href: "#projects" },
-  { name: "Contact", href: "#contact" }
+  { name: "Contact", href: "#contact" },
 ];
