@@ -1,0 +1,691 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Pankaj Kshetri — baje</title>
+  <meta name="description" content="BSc IT student, CTF player (Web & OSINT). Portfolio of Pankaj Kshetri aka baje." />
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&family=Outfit:wght@300;400;500&display=swap" rel="stylesheet" />
+
+  <style>
+    /* ─────────────────────────────────────────
+       CSS CUSTOM PROPERTIES
+    ───────────────────────────────────────── */
+    :root {
+      --bg:        #060d0f;
+      --cyan:      #00f5d4;
+      --blue:      #1a8cff;
+      --green:     #39ff14;
+      --text:      #c8d8dc;
+      --muted:     #4a6670;
+      --surface:   #0b1a1f;
+      --border:    #0e2a30;
+      --font-mono: 'JetBrains Mono', monospace;
+      --font-body: 'Outfit', sans-serif;
+      --nav-h:     60px;
+    }
+
+    /* ─────────────────────────────────────────
+       RESET & BASE
+    ───────────────────────────────────────── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html {
+      scroll-behavior: smooth;
+      scrollbar-width: thin;
+      scrollbar-color: var(--cyan) var(--surface);
+    }
+
+    /* Webkit custom scrollbar */
+    ::-webkit-scrollbar { width: 6px; }
+    ::-webkit-scrollbar-track { background: var(--surface); }
+    ::-webkit-scrollbar-thumb { background: var(--cyan); border-radius: 3px; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: var(--font-body);
+      font-weight: 400;
+      line-height: 1.7;
+      overflow-x: hidden;
+    }
+
+    a { color: inherit; text-decoration: none; }
+
+    /* ─────────────────────────────────────────
+       CANVAS BACKGROUND (particle network)
+    ───────────────────────────────────────── */
+    #particle-canvas {
+      position: fixed;
+      inset: 0;
+      z-index: 0;
+      pointer-events: none;
+    }
+
+    /* ─────────────────────────────────────────
+       NAVBAR
+    ───────────────────────────────────────── */
+    nav {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: var(--nav-h);
+      z-index: 100;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 clamp(1.5rem, 5vw, 4rem);
+      background: rgba(6, 13, 15, 0.85);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+    }
+
+    .nav-logo {
+      font-family: var(--font-mono);
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: var(--cyan);
+      letter-spacing: 0.05em;
+    }
+
+    .nav-links {
+      display: flex;
+      gap: clamp(1rem, 3vw, 2.5rem);
+      list-style: none;
+    }
+
+    .nav-links a {
+      font-family: var(--font-mono);
+      font-size: 0.8rem;
+      color: var(--muted);
+      letter-spacing: 0.08em;
+      text-transform: lowercase;
+      transition: color 0.2s;
+    }
+
+    .nav-links a:hover { color: var(--cyan); }
+
+    /* Mobile nav toggle */
+    .nav-toggle {
+      display: none;
+      flex-direction: column;
+      gap: 5px;
+      cursor: pointer;
+      background: none;
+      border: none;
+      padding: 4px;
+    }
+
+    .nav-toggle span {
+      display: block;
+      width: 22px;
+      height: 2px;
+      background: var(--cyan);
+      border-radius: 2px;
+      transition: transform 0.3s, opacity 0.3s;
+    }
+
+    /* ─────────────────────────────────────────
+       LAYOUT WRAPPER
+    ───────────────────────────────────────── */
+    main {
+      position: relative;
+      z-index: 1;
+    }
+
+    section {
+      padding: clamp(5rem, 10vw, 8rem) clamp(1.5rem, 8vw, 12rem);
+      max-width: 900px;
+      margin: 0 auto;
+    }
+
+    /* ─────────────────────────────────────────
+       SCROLL FADE-IN (IntersectionObserver)
+    ───────────────────────────────────────── */
+    .fade-in {
+      opacity: 0;
+      transform: translateY(28px);
+      transition: opacity 0.65s ease, transform 0.65s ease;
+    }
+
+    .fade-in.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    /* ─────────────────────────────────────────
+       SECTION LABEL
+    ───────────────────────────────────────── */
+    .section-label {
+      font-family: var(--font-mono);
+      font-size: 0.72rem;
+      color: var(--cyan);
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      margin-bottom: 2rem;
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    .section-label::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: var(--border);
+      max-width: 200px;
+    }
+
+    /* ─────────────────────────────────────────
+       HERO
+    ───────────────────────────────────────── */
+    #hero {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      padding-top: var(--nav-h);
+      max-width: 900px;
+    }
+
+    .hero-name {
+      font-family: var(--font-mono);
+      font-size: clamp(2.8rem, 8vw, 6rem);
+      font-weight: 700;
+      color: #e8f4f6;
+      line-height: 1.05;
+      letter-spacing: -0.02em;
+    }
+
+    .hero-alias {
+      font-family: var(--font-mono);
+      font-size: clamp(1rem, 3vw, 1.6rem);
+      color: var(--cyan);
+      margin-top: 0.75rem;
+      font-weight: 400;
+      opacity: 0.85;
+    }
+
+    /* ─────────────────────────────────────────
+       ABOUT
+    ───────────────────────────────────────── */
+    #about p {
+      font-size: clamp(1rem, 2vw, 1.1rem);
+      color: var(--text);
+      max-width: 620px;
+      line-height: 1.85;
+    }
+
+    #about p span.accent { color: var(--cyan); }
+    #about p span.green  { color: var(--green); }
+
+    /* ─────────────────────────────────────────
+       SKILLS
+    ───────────────────────────────────────── */
+    .skills-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 2rem;
+    }
+
+    .skill-cluster h3 {
+      font-family: var(--font-mono);
+      font-size: 0.75rem;
+      color: var(--blue);
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      margin-bottom: 1rem;
+    }
+
+    .badge-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+    }
+
+    /* Terminal badge tag */
+    .badge {
+      font-family: var(--font-mono);
+      font-size: 0.75rem;
+      color: var(--cyan);
+      background: rgba(0, 245, 212, 0.06);
+      border: 1px solid rgba(0, 245, 212, 0.2);
+      padding: 0.3rem 0.65rem;
+      border-radius: 3px;
+      white-space: nowrap;
+      transition: background 0.2s, border-color 0.2s;
+    }
+
+    .badge:hover {
+      background: rgba(0, 245, 212, 0.12);
+      border-color: rgba(0, 245, 212, 0.5);
+    }
+
+    /* ─────────────────────────────────────────
+       CTF CARDS
+    ───────────────────────────────────────── */
+    .ctf-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 1.25rem;
+    }
+
+    .ctf-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 1.5rem;
+      transition: border-color 0.3s, box-shadow 0.3s;
+    }
+
+    /* Glow only on hover */
+    .ctf-card:hover {
+      border-color: rgba(0, 245, 212, 0.45);
+      box-shadow: 0 0 18px rgba(0, 245, 212, 0.08);
+    }
+
+    .ctf-event {
+      font-family: var(--font-mono);
+      font-size: 0.95rem;
+      font-weight: 600;
+      color: #e0eef0;
+      margin-bottom: 0.5rem;
+    }
+
+    .ctf-meta {
+      display: flex;
+      gap: 0.5rem;
+      flex-wrap: wrap;
+      margin-bottom: 0.75rem;
+    }
+
+    .ctf-tag {
+      font-family: var(--font-mono);
+      font-size: 0.68rem;
+      padding: 0.2rem 0.5rem;
+      border-radius: 3px;
+      letter-spacing: 0.05em;
+    }
+
+    .ctf-tag.web   { background: rgba(26, 140, 255, 0.12); color: var(--blue); border: 1px solid rgba(26,140,255,0.25); }
+    .ctf-tag.osint { background: rgba(57, 255, 20, 0.08);  color: var(--green); border: 1px solid rgba(57,255,20,0.2); }
+
+    .ctf-placement {
+      font-size: 0.85rem;
+      color: var(--muted);
+      margin-bottom: 0.75rem;
+    }
+
+    .ctf-writeup {
+      font-family: var(--font-mono);
+      font-size: 0.72rem;
+      color: var(--cyan);
+      opacity: 0.7;
+      transition: opacity 0.2s;
+    }
+
+    .ctf-writeup:hover { opacity: 1; }
+
+    /* ─────────────────────────────────────────
+       CONTACT
+    ───────────────────────────────────────── */
+    .contact-links {
+      display: flex;
+      gap: 1.75rem;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+
+    .contact-link {
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+      font-family: var(--font-mono);
+      font-size: 0.82rem;
+      color: var(--muted);
+      transition: color 0.2s;
+    }
+
+    .contact-link:hover { color: var(--cyan); }
+
+    .contact-link svg {
+      width: 20px;
+      height: 20px;
+      flex-shrink: 0;
+      transition: stroke 0.2s;
+    }
+
+    /* ─────────────────────────────────────────
+       FOOTER
+    ───────────────────────────────────────── */
+    footer {
+      position: relative;
+      z-index: 1;
+      text-align: center;
+      padding: 2.5rem 1.5rem;
+      font-family: var(--font-mono);
+      font-size: 0.7rem;
+      color: var(--muted);
+      border-top: 1px solid var(--border);
+    }
+
+    /* ─────────────────────────────────────────
+       RESPONSIVE
+    ───────────────────────────────────────── */
+    @media (max-width: 640px) {
+      .nav-links { display: none; }
+      .nav-links.open {
+        display: flex;
+        flex-direction: column;
+        position: absolute;
+        top: var(--nav-h);
+        left: 0;
+        right: 0;
+        background: rgba(6, 13, 15, 0.97);
+        padding: 1.5rem 2rem;
+        border-bottom: 1px solid var(--border);
+        gap: 1.25rem;
+      }
+      .nav-toggle { display: flex; }
+      section { padding: 4rem 1.25rem; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Particle canvas sits behind everything -->
+  <canvas id="particle-canvas" aria-hidden="true"></canvas>
+
+  <!-- ── NAVBAR ── -->
+  <nav role="navigation" aria-label="Main navigation">
+    <span class="nav-logo">baje</span>
+    <button class="nav-toggle" aria-label="Toggle menu" aria-expanded="false" id="nav-toggle">
+      <span></span><span></span><span></span>
+    </button>
+    <ul class="nav-links" id="nav-links">
+      <li><a href="#about">about</a></li>
+      <li><a href="#skills">skills</a></li>
+      <li><a href="#ctf">ctf</a></li>
+      <li><a href="#contact">contact</a></li>
+    </ul>
+  </nav>
+
+  <main>
+
+    <!-- ── HERO ── -->
+    <section id="hero" aria-label="Hero">
+      <h1 class="hero-name fade-in">Pankaj Kshetri</h1>
+      <p class="hero-alias fade-in" style="transition-delay:0.15s">@baje</p>
+    </section>
+
+    <!-- ── ABOUT ── -->
+    <section id="about" aria-label="About">
+      <div class="section-label fade-in">about</div>
+      <p class="fade-in" style="transition-delay:0.1s">
+        BSc IT student with a habit of poking at things until they break.
+        I play <span class="accent">CTFs</span> — mostly Web exploitation and
+        <span class="accent">OSINT</span> — and spend a lot of time figuring out
+        how systems work from the outside in. Curious by default,
+        <span class="green">security-minded</span> by choice.
+      </p>
+    </section>
+
+    <!-- ── SKILLS ── -->
+    <section id="skills" aria-label="Skills">
+      <div class="section-label fade-in">skills</div>
+      <div class="skills-grid">
+
+        <div class="skill-cluster fade-in" style="transition-delay:0.05s">
+          <h3>CTF &amp; Security</h3>
+          <div class="badge-list">
+            <span class="badge">[ Web Exploitation ]</span>
+            <span class="badge">[ OSINT ]</span>
+            <span class="badge">[ Reconnaissance ]</span>
+          </div>
+        </div>
+
+        <div class="skill-cluster fade-in" style="transition-delay:0.12s">
+          <h3>IT &amp; General</h3>
+          <div class="badge-list">
+            <span class="badge">[ Networking ]</span>
+            <span class="badge">[ Linux ]</span>
+            <span class="badge">[ Python ]</span>
+          </div>
+        </div>
+
+        <div class="skill-cluster fade-in" style="transition-delay:0.19s">
+          <h3>Tools</h3>
+          <div class="badge-list">
+            <span class="badge">[ Burp Suite ]</span>
+            <span class="badge">[ Nmap ]</span>
+            <span class="badge">[ Shodan ]</span>
+            <span class="badge">[ Wireshark ]</span>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ── CTF ── -->
+    <section id="ctf" aria-label="CTF entries">
+      <div class="section-label fade-in">ctf</div>
+      <div class="ctf-grid">
+
+        <article class="ctf-card fade-in" style="transition-delay:0.05s">
+          <div class="ctf-event">PicoCTF 2024</div>
+          <div class="ctf-meta">
+            <span class="ctf-tag web">Web</span>
+            <span class="ctf-tag osint">OSINT</span>
+          </div>
+          <p class="ctf-placement">Competed individually — solved web &amp; forensics challenges.</p>
+          <a class="ctf-writeup" href="#" aria-label="PicoCTF 2024 writeup">→ writeup</a>
+        </article>
+
+        <article class="ctf-card fade-in" style="transition-delay:0.12s">
+          <div class="ctf-event">HackTheBox CTF</div>
+          <div class="ctf-meta">
+            <span class="ctf-tag web">Web</span>
+          </div>
+          <p class="ctf-placement">Focused on web exploitation tracks and enumeration.</p>
+          <a class="ctf-writeup" href="#" aria-label="HackTheBox CTF writeup">→ writeup</a>
+        </article>
+
+        <article class="ctf-card fade-in" style="transition-delay:0.19s">
+          <div class="ctf-event">TryHackMe — Advent of Cyber</div>
+          <div class="ctf-meta">
+            <span class="ctf-tag osint">OSINT</span>
+            <span class="ctf-tag web">Web</span>
+          </div>
+          <p class="ctf-placement">Completed all daily challenges across the event.</p>
+          <a class="ctf-writeup" href="#" aria-label="Advent of Cyber writeup">→ writeup</a>
+        </article>
+
+      </div>
+    </section>
+
+    <!-- ── CONTACT ── -->
+    <section id="contact" aria-label="Contact">
+      <div class="section-label fade-in">contact</div>
+      <div class="contact-links fade-in" style="transition-delay:0.1s">
+
+        <!-- GitHub -->
+        <a class="contact-link" href="https://github.com/baje555" target="_blank" rel="noopener noreferrer" aria-label="GitHub profile">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"/>
+          </svg>
+          github
+        </a>
+
+        <!-- CTFtime -->
+        <a class="contact-link" href="https://ctftime.org/user/placeholder" target="_blank" rel="noopener noreferrer" aria-label="CTFtime profile">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
+          </svg>
+          ctftime
+        </a>
+
+        <!-- Email -->
+        <a class="contact-link" href="mailto:kshetripankaj73@gmail.com" aria-label="Send email">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/>
+            <polyline points="22,6 12,13 2,6"/>
+          </svg>
+          email
+        </a>
+
+      </div>
+    </section>
+
+  </main>
+
+  <footer>
+    <span>built by <span style="color:var(--cyan)">baje</span> — pankaj kshetri</span>
+  </footer>
+
+  <script>
+    /* ═══════════════════════════════════════════
+       PARTICLE NETWORK BACKGROUND
+       Faint nodes + connecting lines, slow drift
+    ═══════════════════════════════════════════ */
+    (function () {
+      const canvas = document.getElementById('particle-canvas');
+      const ctx    = canvas.getContext('2d');
+
+      // Config
+      const NODE_COUNT   = 55;
+      const MAX_DIST     = 160;   // max px to draw a connecting line
+      const NODE_RADIUS  = 1.5;
+      const NODE_OPACITY = 0.35;
+      const LINE_OPACITY = 0.12;
+      const SPEED        = 0.28;  // max velocity per axis
+      const COLOR        = '0, 245, 212'; // --cyan RGB
+
+      let W, H, nodes;
+
+      // Resize canvas to fill viewport
+      function resize() {
+        W = canvas.width  = window.innerWidth;
+        H = canvas.height = window.innerHeight;
+      }
+
+      // Create a single node with random position + velocity
+      function makeNode() {
+        return {
+          x:  Math.random() * W,
+          y:  Math.random() * H,
+          vx: (Math.random() - 0.5) * SPEED * 2,
+          vy: (Math.random() - 0.5) * SPEED * 2,
+        };
+      }
+
+      function init() {
+        resize();
+        nodes = Array.from({ length: NODE_COUNT }, makeNode);
+      }
+
+      function draw() {
+        ctx.clearRect(0, 0, W, H);
+
+        // Update positions + bounce off edges
+        for (const n of nodes) {
+          n.x += n.vx;
+          n.y += n.vy;
+          if (n.x < 0 || n.x > W) n.vx *= -1;
+          if (n.y < 0 || n.y > H) n.vy *= -1;
+        }
+
+        // Draw connecting lines between nearby nodes
+        for (let i = 0; i < nodes.length; i++) {
+          for (let j = i + 1; j < nodes.length; j++) {
+            const dx   = nodes[i].x - nodes[j].x;
+            const dy   = nodes[i].y - nodes[j].y;
+            const dist = Math.sqrt(dx * dx + dy * dy);
+
+            if (dist < MAX_DIST) {
+              // Fade line opacity with distance
+              const alpha = LINE_OPACITY * (1 - dist / MAX_DIST);
+              ctx.beginPath();
+              ctx.moveTo(nodes[i].x, nodes[i].y);
+              ctx.lineTo(nodes[j].x, nodes[j].y);
+              ctx.strokeStyle = `rgba(${COLOR}, ${alpha})`;
+              ctx.lineWidth   = 0.8;
+              ctx.stroke();
+            }
+          }
+        }
+
+        // Draw nodes
+        for (const n of nodes) {
+          ctx.beginPath();
+          ctx.arc(n.x, n.y, NODE_RADIUS, 0, Math.PI * 2);
+          ctx.fillStyle = `rgba(${COLOR}, ${NODE_OPACITY})`;
+          ctx.fill();
+        }
+
+        requestAnimationFrame(draw);
+      }
+
+      // Kick off
+      init();
+      draw();
+
+      // Re-init on resize (debounced)
+      let resizeTimer;
+      window.addEventListener('resize', () => {
+        clearTimeout(resizeTimer);
+        resizeTimer = setTimeout(init, 150);
+      });
+    })();
+
+
+    /* ═══════════════════════════════════════════
+       SCROLL FADE-IN (IntersectionObserver)
+    ═══════════════════════════════════════════ */
+    (function () {
+      const observer = new IntersectionObserver(
+        (entries) => {
+          entries.forEach((entry) => {
+            if (entry.isIntersecting) {
+              entry.target.classList.add('visible');
+              // Once visible, no need to keep observing
+              observer.unobserve(entry.target);
+            }
+          });
+        },
+        { threshold: 0.12 }
+      );
+
+      // Observe every element with .fade-in
+      document.querySelectorAll('.fade-in').forEach((el) => observer.observe(el));
+    })();
+
+
+    /* ═══════════════════════════════════════════
+       MOBILE NAV TOGGLE
+    ═══════════════════════════════════════════ */
+    (function () {
+      const toggle = document.getElementById('nav-toggle');
+      const links  = document.getElementById('nav-links');
+
+      toggle.addEventListener('click', () => {
+        const isOpen = links.classList.toggle('open');
+        toggle.setAttribute('aria-expanded', isOpen);
+      });
+
+      // Close menu when a link is clicked
+      links.querySelectorAll('a').forEach((a) => {
+        a.addEventListener('click', () => {
+          links.classList.remove('open');
+          toggle.setAttribute('aria-expanded', 'false');
+        });
+      });
+    })();
+  </script>
+
+</body>
+</html>
