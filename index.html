@@ -635,52 +635,97 @@
 </footer>
 
 <script>
-/* ── Particle network ── */
+/* ── Glitch background ── */
 (function(){
   const cv  = document.getElementById('cv');
   const ctx = cv.getContext('2d');
-  const N   = 40, D = 150, C = '0,245,212';
-  let W, H, pts;
+  let W, H, frame = 0;
+  let glitchTimer = 0, glitchDur = 0, glitching = false;
+  let tears = [];
 
   function init(){
     W = cv.width  = window.innerWidth;
     H = cv.height = window.innerHeight;
-    pts = Array.from({length:N}, () => ({
-      x: Math.random()*W, y: Math.random()*H,
-      vx:(Math.random()-.5)*.35, vy:(Math.random()-.5)*.35
-    }));
   }
 
-  function frame(){
-    ctx.clearRect(0,0,W,H);
-    for(const p of pts){
-      p.x+=p.vx; p.y+=p.vy;
-      if(p.x<0||p.x>W) p.vx*=-1;
-      if(p.y<0||p.y>H) p.vy*=-1;
+  /* schedule next glitch burst */
+  function scheduleGlitch(){
+    glitchTimer = 60 + Math.random() * 180; /* frames until next burst */
+    glitchDur   = 4  + Math.random() * 10;  /* how many frames it lasts */
+    glitching   = false;
+  }
+  scheduleGlitch();
+
+  function tick(){
+    ctx.clearRect(0, 0, W, H);
+    frame++;
+
+    /* ── scanlines ── */
+    for(let y = 0; y < H; y += 4){
+      ctx.fillStyle = 'rgba(0,0,0,0.18)';
+      ctx.fillRect(0, y, W, 1);
     }
-    for(let i=0;i<N;i++) for(let j=i+1;j<N;j++){
-      const dx=pts[i].x-pts[j].x, dy=pts[i].y-pts[j].y;
-      const d=Math.sqrt(dx*dx+dy*dy);
-      if(d<D){
-        ctx.beginPath();
-        ctx.moveTo(pts[i].x,pts[i].y);
-        ctx.lineTo(pts[j].x,pts[j].y);
-        ctx.strokeStyle=`rgba(${C},${0.08*(1-d/D)})`;
-        ctx.lineWidth=.6;
-        ctx.stroke();
+
+    /* ── subtle vertical noise columns ── */
+    if(frame % 3 === 0){
+      for(let i = 0; i < 3; i++){
+        const x = Math.random() * W;
+        const h = 20 + Math.random() * 120;
+        const y = Math.random() * H;
+        ctx.fillStyle = `rgba(0,245,212,${0.012 + Math.random()*0.018})`;
+        ctx.fillRect(x, y, 1, h);
       }
     }
-    for(const p of pts){
-      ctx.beginPath();
-      ctx.arc(p.x,p.y,1.2,0,Math.PI*2);
-      ctx.fillStyle=`rgba(${C},0.15)`;
-      ctx.fill();
+
+    /* ── glitch burst logic ── */
+    glitchTimer--;
+    if(glitchTimer <= 0 && !glitching){
+      glitching = true;
+      glitchTimer = glitchDur;
+      /* generate horizontal tear slices */
+      tears = [];
+      const count = 3 + Math.floor(Math.random() * 5);
+      for(let i = 0; i < count; i++){
+        tears.push({
+          y:      Math.random() * H,
+          h:      2 + Math.random() * 18,
+          shift:  (Math.random() < 0.5 ? -1 : 1) * (8 + Math.random() * 40),
+          color:  Math.random() < 0.5 ? '0,245,212' : '255,45,100',
+          alpha:  0.06 + Math.random() * 0.1,
+        });
+      }
     }
-    requestAnimationFrame(frame);
+    if(glitching){
+      glitchTimer--;
+      /* draw tear slices */
+      for(const t of tears){
+        ctx.fillStyle = `rgba(${t.color},${t.alpha})`;
+        ctx.fillRect(0, t.y, W, t.h);
+        /* offset copy — simulates RGB channel shift */
+        ctx.fillStyle = `rgba(${t.color},${t.alpha * 0.5})`;
+        ctx.fillRect(t.shift, t.y + 1, W, Math.max(1, t.h - 2));
+      }
+      /* occasional full-width bright line */
+      if(Math.random() < 0.25){
+        const ly = Math.random() * H;
+        ctx.fillStyle = 'rgba(0,245,212,0.07)';
+        ctx.fillRect(0, ly, W, 1);
+      }
+      if(glitchTimer <= 0) scheduleGlitch();
+    }
+
+    /* ── faint vignette ── */
+    const vg = ctx.createRadialGradient(W/2,H/2,H*0.3,W/2,H/2,H*0.85);
+    vg.addColorStop(0, 'rgba(0,0,0,0)');
+    vg.addColorStop(1, 'rgba(0,0,0,0.45)');
+    ctx.fillStyle = vg;
+    ctx.fillRect(0, 0, W, H);
+
+    requestAnimationFrame(tick);
   }
 
-  init(); frame();
-  let t; window.addEventListener('resize',()=>{ clearTimeout(t); t=setTimeout(init,120); });
+  init(); tick();
+  let rt; window.addEventListener('resize',()=>{ clearTimeout(rt); rt=setTimeout(init,120); });
 })();
 
 /* ── Typewriter role ── */
