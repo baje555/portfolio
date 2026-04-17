@@ -273,7 +273,7 @@
     /* ── Skills cards ── */
     .skill-cards {
       display: grid;
-      grid-template-columns: repeat(3, 1fr);
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
       gap: 1rem;
     }
 
@@ -326,7 +326,7 @@
     /* ── CTF cards ── */
     .ctf-cards {
       display: grid;
-      grid-template-columns: repeat(2, 1fr);
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
       gap: 1rem;
     }
 
@@ -338,7 +338,7 @@
       padding: 1.3rem 1.2rem;
       display: flex;
       flex-direction: column;
-      gap: 0.6rem;
+      gap: 0.55rem;
       transition: border-color 0.2s ease, border-left-color 0.2s ease, box-shadow 0.3s ease;
     }
     .ctf-card:hover {
@@ -355,6 +355,30 @@
       line-height: 1.3;
     }
 
+    /* date + rank row */
+    .ctf-meta {
+      display: flex;
+      gap: 0.75rem;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+    .ctf-date {
+      font-family: var(--mono);
+      font-size: 0.62rem;
+      color: var(--dim);
+      letter-spacing: 0.06em;
+    }
+    .ctf-rank {
+      font-family: var(--mono);
+      font-size: 0.62rem;
+      color: var(--cyan);
+      background: rgba(0,245,212,0.07);
+      border: 1px solid rgba(0,245,212,0.2);
+      padding: 0.1rem 0.45rem;
+      border-radius: 2px;
+      letter-spacing: 0.05em;
+    }
+
     .ctf-desc {
       font-size: 0.82rem;
       color: var(--dim);
@@ -367,14 +391,6 @@
       justify-content: space-between;
       align-items: center;
       margin-top: 0.2rem;
-    }
-
-    .ctf-right {
-      display: flex;
-      flex-direction: column;
-      align-items: flex-end;
-      gap: 0.4rem;
-      flex-shrink: 0;
     }
 
     .ctf-tags {
@@ -453,7 +469,7 @@
       gap: 0.5rem;
     }
 
-    /* ── Mobile ── */
+    /* ── Responsive ── */
     @media (max-width: 600px) {
       #ham { display: flex; }
       .nav-links {
@@ -473,6 +489,13 @@
       }
       .skill-cards { grid-template-columns: 1fr; }
       .ctf-cards   { grid-template-columns: 1fr; }
+      .h-name { font-size: clamp(2.2rem, 12vw, 3.5rem); }
+      .contact-row { gap: 1.5rem; }
+    }
+
+    @media (max-width: 400px) {
+      .ctf-meta { flex-direction: column; align-items: flex-start; gap: 0.3rem; }
+      .ctf-tags { flex-wrap: wrap; }
     }
   </style>
 </head>
@@ -556,45 +579,35 @@
   <section id="ctf">
     <div class="wrap">
       <p class="eyebrow fi">ctf</p>
-      <div class="ctf-cards">
+      <div class="ctf-cards" id="ctf-cards">
 
         <div class="ctf-card fi" style="transition-delay:0.05s">
-          <div class="ctf-name">PicoCTF 2020</div>
+          <div class="ctf-name">PicoCTF 2024</div>
+          <div class="ctf-meta">
+            <span class="ctf-date">Mar 2024</span>
+            <span class="ctf-rank">Top 15%</span>
+          </div>
           <div class="ctf-tags">
             <span class="tag web">WEB</span>
             <span class="tag osint">OSINT</span>
-            <span class="tag pwn">PWN</span>
-            <span class="tag rev">REV</span>
-            <span class="tag crypto">CRYPTO</span>
             <span class="tag forensics">FORENSICS</span>
-            <span class="tag misc">MISC</span>
-            <span class="tag stego">STEGO</span>
-            <span class="tag network">NETWORK</span>
-            <span class="tag mobile">MOBILE</span>
-            <span class="tag hardware">HARDWARE</span>
-            <span class="tag blockchain">BLOCKCHAIN</span>
           </div>
-          <div class="ctf-desc">Competed individually — web & forensics challenges.</div>
+          <div class="ctf-desc">Competed individually — web &amp; forensics challenges.</div>
           <div class="ctf-bottom">
             <span></span>
             <a class="ctf-link" href="#">writeup ↗</a>
           </div>
         </div>
+
         <div class="ctf-card fi" style="transition-delay:0.10s">
-          <div class="ctf-name">Hac</div>
+          <div class="ctf-name">HackTheBox CTF</div>
+          <div class="ctf-meta">
+            <span class="ctf-date">Jan 2024</span>
+            <span class="ctf-rank">Top 20%</span>
+          </div>
           <div class="ctf-tags">
             <span class="tag web">WEB</span>
-            <span class="tag osint">OSINT</span>
             <span class="tag pwn">PWN</span>
-            <span class="tag rev">REV</span>
-            <span class="tag crypto">CRYPTO</span>
-            <span class="tag forensics">FORENSICS</span>
-            <span class="tag misc">MISC</span>
-            <span class="tag stego">STEGO</span>
-            <span class="tag network">NETWORK</span>
-            <span class="tag mobile">MOBILE</span>
-            <span class="tag hardware">HARDWARE</span>
-            <span class="tag blockchain">BLOCKCHAIN</span>
           </div>
           <div class="ctf-desc">Web exploitation tracks and enumeration.</div>
           <div class="ctf-bottom">
@@ -602,11 +615,17 @@
             <a class="ctf-link" href="#">writeup ↗</a>
           </div>
         </div>
+
         <div class="ctf-card fi" style="transition-delay:0.15s">
           <div class="ctf-name">TryHackMe — Advent of Cyber</div>
+          <div class="ctf-meta">
+            <span class="ctf-date">Dec 2023</span>
+            <span class="ctf-rank">Completed</span>
+          </div>
           <div class="ctf-tags">
-            <span class="tag web">WEB</span>
             <span class="tag osint">OSINT</span>
+            <span class="tag web">WEB</span>
+            <span class="tag misc">MISC</span>
           </div>
           <div class="ctf-desc">Completed all daily challenges across the event.</div>
           <div class="ctf-bottom">
