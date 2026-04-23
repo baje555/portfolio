@@ -243,14 +243,14 @@
     /* ── Hero aura canvas ── */
     #aura-cv {
       position: absolute;
+      /* align with the top-right of the name block */
       top: 50%;
-      right: 0;
-      transform: translateY(-50%);
-      width: clamp(220px, 38vw, 480px);
-      height: clamp(320px, 70vh, 680px);
+      left: clamp(200px, 42vw, 560px);
+      transform: translateY(-62%);
+      width: clamp(160px, 35vw, 420px);
+      height: clamp(120px, 22vh, 220px);
       pointer-events: none;
       z-index: 0;
-      opacity: 0.85;
     }
 
     /* scan-line texture over hero */
@@ -780,132 +780,117 @@
 </footer>
 
 <script>
-/* ── Hero aura — flowing cyan/green energy tendrils ── */
+/* ── Hero aura — horizontal energy flow from tip of "j" ── */
 (function(){
-  const cv  = document.getElementById('aura-cv');
+  const cv = document.getElementById('aura-cv');
   if(!cv) return;
   const ctx = cv.getContext('2d');
-  let W, H;
-
-  /* A single tendril — a chain of particles that flow upward with turbulence */
-  function makeTendril(baseX, baseY){
-    const pts = [];
-    const count = 28 + Math.floor(Math.random()*14);
-    for(let i=0;i<count;i++) pts.push({
-      x: baseX + (Math.random()-0.5)*8,
-      y: baseY - i*(H/count)*0.9,
-      vx:(Math.random()-0.5)*0.6,
-      vy:-(0.4+Math.random()*0.5),
-      life: 1,
-      phase: Math.random()*Math.PI*2,
-    });
-    return { pts, alpha: 0.55+Math.random()*0.35, width: 1.2+Math.random()*2.2,
-             hue: Math.random()<0.65 ? 168 : 140, /* cyan vs green */
-             speed: 0.6+Math.random()*0.5 };
-  }
-
-  let tendrils = [];
-  let tick = 0;
+  let W, H, tendrils = [], tick = 0;
 
   function init(){
     W = cv.width  = cv.offsetWidth;
     H = cv.height = cv.offsetHeight;
     tendrils = [];
-    /* spawn initial tendrils from bottom-left edge of canvas (= right of name) */
-    for(let i=0;i<9;i++) spawnTendril();
+    for(let i = 0; i < 11; i++) spawnTendril();
   }
 
   function spawnTendril(){
-    /* origin: bottom portion of canvas, left side (where name ends) */
-    const bx = W * (0.02 + Math.random()*0.18);
-    const by = H * (0.55 + Math.random()*0.38);
-    tendrils.push(makeTendril(bx, by));
+    /* Origin: left edge of canvas, vertically centered (= tip of "j") */
+    const oy = H * (0.38 + (Math.random() - 0.5) * 0.22);
+    const ptCount = 22 + Math.floor(Math.random() * 16);
+    const pts = [];
+    for(let i = 0; i < ptCount; i++){
+      pts.push({
+        x: (i / ptCount) * W * (0.55 + Math.random() * 0.45),
+        y: oy + (Math.random() - 0.5) * 6,
+        vy: (Math.random() - 0.5) * 0.4,
+        phase: Math.random() * Math.PI * 2,
+      });
+    }
+    tendrils.push({
+      pts,
+      alpha:  0.5 + Math.random() * 0.4,
+      width:  0.8 + Math.random() * 1.8,
+      hue:    Math.random() < 0.6 ? 168 : 142,
+      speed:  0.5 + Math.random() * 0.6,
+      life:   1.0,
+    });
   }
 
   function drawTendril(t){
     if(t.pts.length < 2) return;
+    const p0 = t.pts[0], pN = t.pts[t.pts.length - 1];
+
+    /* core stroke */
     ctx.beginPath();
-    ctx.moveTo(t.pts[0].x, t.pts[0].y);
-    for(let i=1;i<t.pts.length;i++){
-      const mx = (t.pts[i-1].x + t.pts[i].x)/2;
-      const my = (t.pts[i-1].y + t.pts[i].y)/2;
+    ctx.moveTo(p0.x, p0.y);
+    for(let i = 1; i < t.pts.length; i++){
+      const mx = (t.pts[i-1].x + t.pts[i].x) / 2;
+      const my = (t.pts[i-1].y + t.pts[i].y) / 2;
       ctx.quadraticCurveTo(t.pts[i-1].x, t.pts[i-1].y, mx, my);
     }
 
-    /* gradient along the tendril — bright core fades to transparent tip */
-    const grad = ctx.createLinearGradient(
-      t.pts[0].x, t.pts[0].y,
-      t.pts[t.pts.length-1].x, t.pts[t.pts.length-1].y
-    );
-    grad.addColorStop(0,   `hsla(${t.hue},100%,65%,0)`);
-    grad.addColorStop(0.15,`hsla(${t.hue},100%,72%,${t.alpha})`);
-    grad.addColorStop(0.5, `hsla(${t.hue},100%,80%,${t.alpha*0.85})`);
-    grad.addColorStop(0.8, `hsla(${t.hue},100%,90%,${t.alpha*0.5})`);
-    grad.addColorStop(1,   `hsla(${t.hue},100%,95%,0)`);
-
+    const grad = ctx.createLinearGradient(p0.x, p0.y, pN.x, pN.y);
+    grad.addColorStop(0,    `hsla(${t.hue},100%,75%,0)`);
+    grad.addColorStop(0.08, `hsla(${t.hue},100%,80%,${t.alpha})`);
+    grad.addColorStop(0.45, `hsla(${t.hue},100%,85%,${t.alpha * 0.8})`);
+    grad.addColorStop(0.75, `hsla(${t.hue},100%,90%,${t.alpha * 0.4})`);
+    grad.addColorStop(1,    `hsla(${t.hue},100%,95%,0)`);
     ctx.strokeStyle = grad;
-    ctx.lineWidth   = t.width * (1 - tick%120/240);
+    ctx.lineWidth   = t.width;
     ctx.lineCap     = 'round';
     ctx.lineJoin    = 'round';
     ctx.stroke();
 
-    /* glow pass — wider, more transparent */
-    ctx.lineWidth = t.width * 3.5;
-    const glow = ctx.createLinearGradient(
-      t.pts[0].x, t.pts[0].y,
-      t.pts[t.pts.length-1].x, t.pts[t.pts.length-1].y
-    );
-    glow.addColorStop(0,   `hsla(${t.hue},100%,65%,0)`);
-    glow.addColorStop(0.2, `hsla(${t.hue},100%,65%,${t.alpha*0.18})`);
-    glow.addColorStop(0.6, `hsla(${t.hue},100%,70%,${t.alpha*0.12})`);
-    glow.addColorStop(1,   `hsla(${t.hue},100%,75%,0)`);
+    /* glow pass */
+    ctx.lineWidth = t.width * 4;
+    const glow = ctx.createLinearGradient(p0.x, p0.y, pN.x, pN.y);
+    glow.addColorStop(0,    `hsla(${t.hue},100%,65%,0)`);
+    glow.addColorStop(0.1,  `hsla(${t.hue},100%,65%,${t.alpha * 0.15})`);
+    glow.addColorStop(0.5,  `hsla(${t.hue},100%,70%,${t.alpha * 0.1})`);
+    glow.addColorStop(1,    `hsla(${t.hue},100%,75%,0)`);
     ctx.strokeStyle = glow;
     ctx.stroke();
   }
 
   function frame(){
     tick++;
-    ctx.clearRect(0,0,W,H);
+    ctx.clearRect(0, 0, W, H);
 
-    /* respawn dead tendrils */
-    if(tendrils.length < 9) spawnTendril();
+    if(tendrils.length < 11) spawnTendril();
 
-    for(let ti=tendrils.length-1; ti>=0; ti--){
+    for(let ti = tendrils.length - 1; ti >= 0; ti--){
       const t = tendrils[ti];
-      let dead = false;
 
-      for(let i=0;i<t.pts.length;i++){
+      /* animate each point — vertical wobble only, horizontal stays */
+      for(let i = 0; i < t.pts.length; i++){
         const p = t.pts[i];
-        /* turbulent horizontal drift — sinusoidal + noise */
-        p.vx += (Math.random()-0.5)*0.18;
-        p.vx *= 0.92;
-        /* upward drift with slight rightward lean */
-        p.vy  = -(t.speed + Math.sin(tick*0.04 + p.phase)*0.25);
-        p.x  += p.vx + Math.sin(tick*0.03 + i*0.4)*0.5 + 0.3;
-        p.y  += p.vy;
-        p.life -= 0.003;
-        if(p.y < -20) dead = true;
+        /* vertical turbulence — more at the tip, less at origin */
+        const spread = (i / t.pts.length);
+        p.vy += (Math.random() - 0.5) * 0.12 * spread;
+        p.vy *= 0.88;
+        p.y  += p.vy + Math.sin(tick * 0.05 + p.phase + i * 0.3) * 0.35 * spread;
+        /* drift rightward slowly */
+        p.x  += t.speed * 0.18;
       }
 
-      t.alpha = Math.max(0, t.alpha - 0.0015);
+      t.life  -= 0.004;
+      t.alpha  = t.life * (0.5 + Math.random() * 0.1);
+
       drawTendril(t);
 
-      if(dead || t.alpha <= 0){
-        tendrils.splice(ti,1);
+      /* remove when drifted off canvas or faded */
+      if(t.pts[t.pts.length - 1].x > W * 1.1 || t.life <= 0){
+        tendrils.splice(ti, 1);
       }
     }
 
     requestAnimationFrame(frame);
   }
 
-  /* wait for layout then init */
-  setTimeout(()=>{ init(); frame(); }, 100);
-
+  setTimeout(() => { init(); frame(); }, 120);
   let rt;
-  window.addEventListener('resize',()=>{
-    clearTimeout(rt);
-    rt = setTimeout(init, 150);
-  });
+  window.addEventListener('resize', () => { clearTimeout(rt); rt = setTimeout(init, 150); });
 })();
 
 /* ── Glitch background ── */
