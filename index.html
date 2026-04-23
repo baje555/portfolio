@@ -240,19 +240,6 @@
 
     @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0} }
 
-    /* ── Hero aura canvas ── */
-    #aura-cv {
-      position: absolute;
-      /* align with the top-right of the name block */
-      top: 50%;
-      left: clamp(200px, 42vw, 560px);
-      transform: translateY(-62%);
-      width: clamp(160px, 35vw, 420px);
-      height: clamp(120px, 22vh, 220px);
-      pointer-events: none;
-      z-index: 0;
-    }
-
     /* scan-line texture over hero */
     #hero::after {
       content: '';
@@ -614,7 +601,6 @@
 
   <!-- HERO -->
   <section id="hero">
-    <canvas id="aura-cv" aria-hidden="true"></canvas>
     <div class="wrap hero-inner">
       <h1 class="h-name fi" data-text="Pankaj&#10;Kshetri">Pankaj<br>Kshetri</h1>
       <p class="h-alias fi" style="transition-delay:.12s">@baje</p>
@@ -780,119 +766,6 @@
 </footer>
 
 <script>
-/* ── Hero aura — horizontal energy flow from tip of "j" ── */
-(function(){
-  const cv = document.getElementById('aura-cv');
-  if(!cv) return;
-  const ctx = cv.getContext('2d');
-  let W, H, tendrils = [], tick = 0;
-
-  function init(){
-    W = cv.width  = cv.offsetWidth;
-    H = cv.height = cv.offsetHeight;
-    tendrils = [];
-    for(let i = 0; i < 11; i++) spawnTendril();
-  }
-
-  function spawnTendril(){
-    /* Origin: left edge of canvas, vertically centered (= tip of "j") */
-    const oy = H * (0.38 + (Math.random() - 0.5) * 0.22);
-    const ptCount = 22 + Math.floor(Math.random() * 16);
-    const pts = [];
-    for(let i = 0; i < ptCount; i++){
-      pts.push({
-        x: (i / ptCount) * W * (0.55 + Math.random() * 0.45),
-        y: oy + (Math.random() - 0.5) * 6,
-        vy: (Math.random() - 0.5) * 0.4,
-        phase: Math.random() * Math.PI * 2,
-      });
-    }
-    tendrils.push({
-      pts,
-      alpha:  0.5 + Math.random() * 0.4,
-      width:  0.8 + Math.random() * 1.8,
-      hue:    Math.random() < 0.6 ? 168 : 142,
-      speed:  0.5 + Math.random() * 0.6,
-      life:   1.0,
-    });
-  }
-
-  function drawTendril(t){
-    if(t.pts.length < 2) return;
-    const p0 = t.pts[0], pN = t.pts[t.pts.length - 1];
-
-    /* core stroke */
-    ctx.beginPath();
-    ctx.moveTo(p0.x, p0.y);
-    for(let i = 1; i < t.pts.length; i++){
-      const mx = (t.pts[i-1].x + t.pts[i].x) / 2;
-      const my = (t.pts[i-1].y + t.pts[i].y) / 2;
-      ctx.quadraticCurveTo(t.pts[i-1].x, t.pts[i-1].y, mx, my);
-    }
-
-    const grad = ctx.createLinearGradient(p0.x, p0.y, pN.x, pN.y);
-    grad.addColorStop(0,    `hsla(${t.hue},100%,75%,0)`);
-    grad.addColorStop(0.08, `hsla(${t.hue},100%,80%,${t.alpha})`);
-    grad.addColorStop(0.45, `hsla(${t.hue},100%,85%,${t.alpha * 0.8})`);
-    grad.addColorStop(0.75, `hsla(${t.hue},100%,90%,${t.alpha * 0.4})`);
-    grad.addColorStop(1,    `hsla(${t.hue},100%,95%,0)`);
-    ctx.strokeStyle = grad;
-    ctx.lineWidth   = t.width;
-    ctx.lineCap     = 'round';
-    ctx.lineJoin    = 'round';
-    ctx.stroke();
-
-    /* glow pass */
-    ctx.lineWidth = t.width * 4;
-    const glow = ctx.createLinearGradient(p0.x, p0.y, pN.x, pN.y);
-    glow.addColorStop(0,    `hsla(${t.hue},100%,65%,0)`);
-    glow.addColorStop(0.1,  `hsla(${t.hue},100%,65%,${t.alpha * 0.15})`);
-    glow.addColorStop(0.5,  `hsla(${t.hue},100%,70%,${t.alpha * 0.1})`);
-    glow.addColorStop(1,    `hsla(${t.hue},100%,75%,0)`);
-    ctx.strokeStyle = glow;
-    ctx.stroke();
-  }
-
-  function frame(){
-    tick++;
-    ctx.clearRect(0, 0, W, H);
-
-    if(tendrils.length < 11) spawnTendril();
-
-    for(let ti = tendrils.length - 1; ti >= 0; ti--){
-      const t = tendrils[ti];
-
-      /* animate each point — vertical wobble only, horizontal stays */
-      for(let i = 0; i < t.pts.length; i++){
-        const p = t.pts[i];
-        /* vertical turbulence — more at the tip, less at origin */
-        const spread = (i / t.pts.length);
-        p.vy += (Math.random() - 0.5) * 0.12 * spread;
-        p.vy *= 0.88;
-        p.y  += p.vy + Math.sin(tick * 0.05 + p.phase + i * 0.3) * 0.35 * spread;
-        /* drift rightward slowly */
-        p.x  += t.speed * 0.18;
-      }
-
-      t.life  -= 0.004;
-      t.alpha  = t.life * (0.5 + Math.random() * 0.1);
-
-      drawTendril(t);
-
-      /* remove when drifted off canvas or faded */
-      if(t.pts[t.pts.length - 1].x > W * 1.1 || t.life <= 0){
-        tendrils.splice(ti, 1);
-      }
-    }
-
-    requestAnimationFrame(frame);
-  }
-
-  setTimeout(() => { init(); frame(); }, 120);
-  let rt;
-  window.addEventListener('resize', () => { clearTimeout(rt); rt = setTimeout(init, 150); });
-})();
-
 /* ── Glitch background ── */
 (function(){
   const cv  = document.getElementById('cv');
